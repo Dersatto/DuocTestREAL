@@ -3,6 +3,7 @@ package com.dersad.duoctest.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.dersad.duoctest.R
 import com.dersad.duoctest.data.AppDatabase
 import com.dersad.duoctest.data.Producto
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class ProductosViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = AppDatabase.getInstance(application).productoDao()
-
+//Trae los datos del Dao
     val productos = dao.getAll()
         .stateIn(
             scope = viewModelScope,
@@ -38,7 +39,9 @@ class ProductosViewModel(application: Application) : AndroidViewModel(applicatio
                 Producto(
                     nombre = nombre.trim(),
                     descripcion = descripcion.trim(),
-                    precio = precio
+                    precio = precio,
+                    // Añadimos una imagen por defecto para que la función no falle
+                    imageResId = R.drawable.ic_launcher_foreground 
                 )
             )
         }

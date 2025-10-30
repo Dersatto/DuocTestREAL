@@ -66,7 +66,7 @@ fun AppEcommerce() {
 
     val navItems = listOf(
         NavItem("home", "Inicio", Icons.Default.Home),
-        NavItem("products", "Productos", Icons.Default.ShoppingCart), // Cambiado para evitar error
+        NavItem("products", "Productos", Icons.Default.ShoppingCart),
         NavItem("cart", "Carrito", Icons.Filled.ShoppingCart)
     )
 
@@ -109,6 +109,7 @@ fun AppEcommerce() {
                             }
                         }
                     }
+                    // Se elimina el botón de vaciar carrito global
                 )
             }
         ) { innerPadding ->

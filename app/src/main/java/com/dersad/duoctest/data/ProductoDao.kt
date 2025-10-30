@@ -4,8 +4,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
-
-
 //DATA ACCESS OBJECT(DAO)
 //@Dao: marca la interfaz como capa de acceso a datos.
 //exactamente cmo la guia...

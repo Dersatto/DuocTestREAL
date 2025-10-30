@@ -1,12 +1,14 @@
 package com.dersad.duoctest.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -16,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,7 +29,7 @@ import java.text.DecimalFormat
 @Composable
 fun PantallaProductoDetalle(
     navController: NavController,
-    productId: Int, // Corregido a Int
+    productId: Int,
     productosViewModel: ProductosViewModel = viewModel(),
     cartViewModel: CartViewModel = viewModel()
 ) {
@@ -54,6 +57,12 @@ fun ProductoDetalle(producto: Producto, onAddToCart: (Producto) -> Unit) {
     val df = DecimalFormat("#,##0.##")
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter = painterResource(id = producto.imageResId),
+            contentDescription = producto.nombre,
+            modifier = Modifier.size(200.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text("ID: ${producto.id}")
         Text("Nombre: ${producto.nombre}")
         Text("Descripción: ${producto.descripcion}")
