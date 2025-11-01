@@ -39,7 +39,13 @@ import com.dersad.duoctest.ui.PantallaCarrito
 import com.dersad.duoctest.ui.PantallaProductoDetalle
 import com.dersad.duoctest.ui.PantallaProductos
 import com.dersad.duoctest.ui.theme.MyApplicationTheme
+import com.dersad.duoctest.ui.UsuarioViewModel
+import com.dersad.duoctest.ui.LoginScreen
+import com.dersad.duoctest.ui.UsuarioScreen
+
 import kotlinx.coroutines.launch
+
+
 
 data class NavItem(val route: String, val label: String, val icon: ImageVector)
 
@@ -63,11 +69,13 @@ fun AppEcommerce() {
     val scope = rememberCoroutineScope()
 
     val cartViewModel: CartViewModel = viewModel()
+    val usuarioViewModel: UsuarioViewModel = viewModel()
 
     val navItems = listOf(
         NavItem("home", "Inicio", Icons.Default.Home),
         NavItem("products", "Productos", Icons.Default.ShoppingCart),
-        NavItem("cart", "Carrito", Icons.Filled.ShoppingCart)
+        NavItem("cart", "Carrito", Icons.Filled.ShoppingCart),
+        NavItem("login", "Login", Icons.Default.Menu)
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -121,6 +129,11 @@ fun AppEcommerce() {
                 composable("home") { HomeScreen(navController) }
                 composable("products") { PantallaProductos(navController) }
                 composable("cart") { PantallaCarrito(vm = cartViewModel) }
+                composable("login") { LoginScreen(navController, usuarioViewModel) }
+                composable("user") { UsuarioScreen(usuarioViewModel) }
+
+
+
                 composable(
                     "products/{productId}",
                     arguments = listOf(navArgument("productId") { type = NavType.IntType })
