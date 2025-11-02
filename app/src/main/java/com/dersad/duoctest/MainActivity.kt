@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -45,8 +46,6 @@ import com.dersad.duoctest.ui.UsuarioScreen
 
 import kotlinx.coroutines.launch
 
-
-
 data class NavItem(val route: String, val label: String, val icon: ImageVector)
 
 class MainActivity : ComponentActivity() {
@@ -72,17 +71,20 @@ fun AppEcommerce() {
     val usuarioViewModel: UsuarioViewModel = viewModel()
 
     val navItems = listOf(
-        NavItem("home", "Inicio", Icons.Default.Home),
+        NavItem("home", "Bienvenido", Icons.Default.Home), // Título cambiado
         NavItem("products", "Productos", Icons.Default.ShoppingCart),
         NavItem("cart", "Carrito", Icons.Filled.ShoppingCart),
-        NavItem("login", "Login", Icons.Default.Menu)
+        NavItem("user", "Mi Perfil", Icons.Default.AccountCircle)
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val showTopBar = currentRoute != "login"
+
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = showTopBar, 
         drawerContent = {
             ModalDrawerSheet {
                 navItems.forEach { item ->
@@ -93,7 +95,7 @@ fun AppEcommerce() {
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId)
+                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
@@ -104,35 +106,38 @@ fun AppEcommerce() {
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(navItems.find { it.route == currentRoute }?.label ?: "Mi Tienda") },
-                    navigationIcon = {
-                        if (navController.previousBackStackEntry != null) {
-                            IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
-                            }
-                        } else {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, "Menú")
+                if (showTopBar) {
+                    TopAppBar(
+                        title = { Text(navItems.find { it.route == currentRoute }?.label ?: "Mi Tienda") },
+                        navigationIcon = {
+                            if (navController.previousBackStackEntry != null) {
+                                IconButton(onClick = { navController.navigateUp() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
+                                }
+                            } else {
+                                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                    Icon(Icons.Default.Menu, "Menú")
+                                }
                             }
                         }
-                    }
-                    // Se elimina el botón de vaciar carrito global
-                )
+                    )
+                }
             }
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "home",
+                startDestination = "login", 
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable("home") { HomeScreen(navController) }
-                composable("products") { PantallaProductos(navController) }
+                composable("home") { 
+                    HomeScreen(cartViewModel = cartViewModel) 
+                }
+                composable("products") { 
+                    PantallaProductos(navController, cartViewModel = cartViewModel)
+                }
                 composable("cart") { PantallaCarrito(vm = cartViewModel) }
                 composable("login") { LoginScreen(navController, usuarioViewModel) }
-                composable("user") { UsuarioScreen(usuarioViewModel) }
-
-
+                composable("user") { UsuarioScreen(usuarioViewModel) } 
 
                 composable(
                     "products/{productId}",

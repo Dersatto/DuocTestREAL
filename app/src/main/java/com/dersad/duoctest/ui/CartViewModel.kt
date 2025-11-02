@@ -3,50 +3,52 @@ package com.dersad.duoctest.ui
 import androidx.lifecycle.ViewModel
 import com.dersad.duoctest.data.Producto
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 data class CartItem(val producto: Producto, val quantity: Int)
 
 class CartViewModel : ViewModel() {
     private val _cartItems = MutableStateFlow<Map<Int, CartItem>>(emptyMap())
-    val cartItems = _cartItems.asStateFlow()
+    val cartItems: StateFlow<Map<Int, CartItem>> = _cartItems.asStateFlow()
 
     fun addToCart(producto: Producto) {
-
-        val newCartItems = _cartItems.value.toMutableMap()
-        val existingItem = newCartItems[producto.id]
-
-        if (existingItem != null) {
-            newCartItems[producto.id] = existingItem.copy(quantity = existingItem.quantity + 1)
-        } else {
-            newCartItems[producto.id] = CartItem(producto, 1)
+        _cartItems.update { currentItems ->
+            val newItems = currentItems.toMutableMap()
+            val existingItem = newItems[producto.id]
+            if (existingItem != null) {
+                newItems[producto.id] = existingItem.copy(quantity = existingItem.quantity + 1)
+            } else {
+                newItems[producto.id] = CartItem(producto, 1)
+            }
+            newItems
         }
-
-        _cartItems.value = newCartItems
     }
 
     fun removeFromCart(producto: Producto) {
-        val newCartItems = _cartItems.value.toMutableMap()
-        newCartItems.remove(producto.id)
-        _cartItems.value = newCartItems
+        _cartItems.update { currentItems ->
+            currentItems - producto.id
+        }
     }
 
     fun increaseQuantity(producto: Producto) {
-        addToCart(producto) //
+        addToCart(producto) 
     }
 
     fun decreaseQuantity(producto: Producto) {
-        val newCartItems = _cartItems.value.toMutableMap()
-        val existingItem = newCartItems[producto.id]
-
-        if (existingItem != null) {
-            if (existingItem.quantity > 1) {
-                newCartItems[producto.id] = existingItem.copy(quantity = existingItem.quantity - 1)
-            } else {
-                newCartItems.remove(producto.id)
+        _cartItems.update { currentItems ->
+            val newItems = currentItems.toMutableMap()
+            val existingItem = newItems[producto.id]
+            if (existingItem != null) {
+                if (existingItem.quantity > 1) {
+                    newItems[producto.id] = existingItem.copy(quantity = existingItem.quantity - 1)
+                } else {
+                    newItems.remove(producto.id)
+                }
             }
+            newItems
         }
-        _cartItems.value = newCartItems
     }
 
     fun clearCart() {

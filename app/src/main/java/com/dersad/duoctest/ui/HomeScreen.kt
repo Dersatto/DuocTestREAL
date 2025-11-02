@@ -1,92 +1,173 @@
 package com.dersad.duoctest.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.dersad.duoctest.R
+import com.dersad.duoctest.data.Producto
 
 @Composable
-fun HomeScreen(navController: NavController, vm: ProductosViewModel = viewModel()) {
-    val productos by vm.productos.collectAsStateWithLifecycle()
+fun HomeScreen(
+    cartViewModel: CartViewModel, 
+    productosViewModel: ProductosViewModel = viewModel()
+) {
+    val productos by productosViewModel.productos.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    var selectedProduct by remember { mutableStateOf<Producto?>(null) }
+
+    val destacados = remember(productos) { productos.shuffled().take(4) }
+    val listados = remember(productos) { 
+        productos.filter { p -> !destacados.contains(p) }.shuffled().take(6) 
+    }
+
+    if (selectedProduct != null) {
+        AlertDialog(
+            onDismissRequest = { selectedProduct = null },
+            title = { Text(selectedProduct!!.nombre) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AsyncImage(
+                        model = selectedProduct!!.imageResId,
+                        contentDescription = selectedProduct!!.nombre,
+                        modifier = Modifier.fillMaxWidth().height(180.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(selectedProduct!!.descripcion)
+                    Text(text = "Precio: ${formatClp(selectedProduct!!.precio)}", style = MaterialTheme.typography.titleMedium)
+                }
+            },
+            confirmButton = {
+                Button(onClick = { 
+                    cartViewModel.addToCart(selectedProduct!!)
+                    Toast.makeText(context, "${selectedProduct!!.nombre} añadido al carrito", Toast.LENGTH_SHORT).show()
+                    selectedProduct = null
+                }) {
+                    Text("Agregar al carrito")
+                }
+            },
+            dismissButton = { 
+                OutlinedButton(onClick = { selectedProduct = null }) {
+                    Text("Cerrar")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .verticalScroll(rememberScrollState())
     ) {
-        Text("Poner con Slide más Productos", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (productos.isEmpty()) {
-            CircularProgressIndicator()
-        } else {
-            // Corregido para buscar el nombre "Shaw"
-            val shawProduct = productos.find { it.nombre == "Shaw" }
-
-            if (shawProduct != null) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navController.navigate("products/${shawProduct.id}") },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    //Toda esta columna es el Shaw en el centro con su imagen, si queremos poner más hay q repetir, no se ponerlo en slide...
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Image(
-                            painter = painterResource(id = R.mipmap.shaw_foreground),
-                            contentDescription = shawProduct.nombre,
-                            modifier = Modifier
-                                .height(250.dp)
-                                .fillMaxWidth(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = shawProduct.nombre,
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        Text(
-                            text = shawProduct.descripcion,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(16.dp),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
-                Text("Producto no disponible. Prueba reinstalando la app.")
-            }
+        // --- Banner de Bienvenida ---
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp), // Altura fija para el banner o quizas no,nose
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.vinilos_foreground), // Usamos una imagen que ya existe para que compile
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            Text(
+                text = "NOMBRE DE LA TIENDA DE VINILOS(DA IDEAS NOS) ",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = { navController.navigate("products") }) {
-            Text("Ver Catálogo Completo")
+        // Contenido Principal
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Productos Destacados
+            Text(
+                "Productos Destacados",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth().height(520.dp), 
+                userScrollEnabled = false
+            ) {
+                items(destacados) { p ->
+                    Card(onClick = { selectedProduct = p }, shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
+                        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            AsyncImage(
+                                model = p.imageResId,
+                                contentDescription = p.nombre,
+                                modifier = Modifier.fillMaxWidth().height(120.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                            Text(p.nombre, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(text = formatClp(p.precio), style = MaterialTheme.typography.labelLarge)
+                            Button(onClick = { 
+                                cartViewModel.addToCart(p)
+                                Toast.makeText(context, "${p.nombre} añadido al carrito", Toast.LENGTH_SHORT).show()
+                            }, modifier = Modifier.fillMaxWidth()) {
+                                Text("Agregar al carrito")
+                            }
+                        }
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // --- Tal vez te interese (Restaurado) ---
+            Text(
+                "Tal vez te interese",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(listados) { p ->
+                    Card(onClick = { selectedProduct = p }, modifier = Modifier.width(240.dp)) {
+                        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            AsyncImage(
+                                model = p.imageResId,
+                                contentDescription = p.nombre,
+                                modifier = Modifier.fillMaxWidth().height(120.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                            Text(p.nombre, style = MaterialTheme.typography.titleSmall)
+                            Text(text = formatClp(p.precio), style = MaterialTheme.typography.labelLarge)
+                            OutlinedButton(onClick = { 
+                                cartViewModel.addToCart(p)
+                                Toast.makeText(context, "${p.nombre} añadido al carrito", Toast.LENGTH_SHORT).show()
+                            }, modifier = Modifier.fillMaxWidth()) { Text("Agregar al carrito") }
+                        }
+                    }
+                }
+            }
         }
     }
 }
