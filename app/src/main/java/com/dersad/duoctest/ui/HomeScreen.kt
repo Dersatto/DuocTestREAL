@@ -40,7 +40,7 @@ fun HomeScreen(
 
     val destacados = remember(productos) { productos.shuffled().take(4) }
     val listados = remember(productos) { 
-        productos.filter { p -> !destacados.contains(p) }.shuffled().take(6) 
+        productos.filter { p -> !destacados.contains(p) }.shuffled().take(4)
     }
 
     if (selectedProduct != null) {
@@ -109,13 +109,13 @@ fun HomeScreen(
             Text(
                 "Productos Destacados",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(top= 16.dp, bottom = 18.dp )
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth().height(520.dp), 
+                modifier = Modifier.height(540.dp),
                 userScrollEnabled = false
             ) {
                 items(destacados) { p ->

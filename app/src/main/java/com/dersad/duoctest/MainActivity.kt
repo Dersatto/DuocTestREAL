@@ -17,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,7 +47,6 @@ import com.dersad.duoctest.ui.UsuarioViewModel
 import com.dersad.duoctest.ui.LoginScreen
 import com.dersad.duoctest.ui.ProductAddView
 import com.dersad.duoctest.ui.UsuarioScreen
-
 import kotlinx.coroutines.launch
 
 data class NavItem(val route: String, val label: String, val icon: ImageVector)
@@ -79,8 +80,13 @@ fun AppEcommerce() {
         NavItem("user", "Mi Perfil", Icons.Default.AccountCircle),
         NavItem("addproduct", "Agregar Producto", Icons.Default.AccountCircle),
         NavItem("about", "Sobre Nosotros", Icons.Default.AccountCircle)
+    )
 
-
+    val bottomNavItems = listOf(
+        NavItem("home", "Inicio", Icons.Default.Home),
+        NavItem("products", "Productos", Icons.Default.ShoppingCart),
+        NavItem("cart", "Carrito", Icons.Default.ShoppingCart),
+        NavItem("user", "Perfil", Icons.Default.AccountCircle)
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -90,7 +96,7 @@ fun AppEcommerce() {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = showTopBar, 
+        gesturesEnabled = showTopBar,
         drawerContent = {
             ModalDrawerSheet {
                 navItems.forEach { item ->
@@ -128,19 +134,37 @@ fun AppEcommerce() {
                         }
                     )
                 }
+            },
+
+            bottomBar = {
+                if (currentRoute != "login") {
+                    NavigationBar {
+                        bottomNavItems.forEach { item ->
+                            NavigationBarItem(
+                                icon = { Icon(item.icon, contentDescription = item.label) },
+                                label = { Text(item.label) },
+                                selected = currentRoute == item.route,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
             }
+
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "login", 
+                startDestination = "login",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable("home") { 
-                    HomeScreen(cartViewModel = cartViewModel) 
-                }
-                composable("products") { 
-                    PantallaProductos(navController, cartViewModel = cartViewModel)
-                }
+                composable("home") { HomeScreen(cartViewModel = cartViewModel) }
+                composable("products") { PantallaProductos(navController, cartViewModel = cartViewModel) }
                 composable("cart") { PantallaCarrito(vm = cartViewModel) }
                 composable("login") { LoginScreen(navController, usuarioViewModel) }
                 composable("user") { UsuarioScreen(usuarioViewModel) }

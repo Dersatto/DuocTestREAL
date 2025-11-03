@@ -10,11 +10,17 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = viewModel()) {
@@ -24,8 +30,20 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
     Column(
         Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 40.dp, vertical = 60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Logo()
+        Text(
+            text = "Ingrese sus datos para iniciar sesión",
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(CenterHorizontally)
+                .padding(bottom = 16.dp)
+        )
+
 
         OutlinedTextField(
             value = estado.nombre,
@@ -37,6 +55,7 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
                     Text(text = it, color = MaterialTheme.colorScheme.error)
                 }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -50,6 +69,7 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
                     Text(text = it, color = MaterialTheme.colorScheme.error)
                 }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -63,6 +83,7 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
                     Text(text = it, color = MaterialTheme.colorScheme.error)
                 }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -74,6 +95,7 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
                     }
                 }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Iniciar Sesión")
