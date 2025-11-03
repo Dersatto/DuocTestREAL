@@ -20,6 +20,9 @@ fun AboutView(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Logo()
+
         Text(
             text = "Sobre Nosotros",
             style = MaterialTheme.typography.headlineMedium,

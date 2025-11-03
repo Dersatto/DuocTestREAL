@@ -39,6 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.compose.material3.TopAppBarDefaults
 import com.dersad.duoctest.ui.AboutView
 import com.dersad.duoctest.ui.CartViewModel
 import com.dersad.duoctest.ui.HomeScreen
@@ -51,7 +52,7 @@ import com.dersad.duoctest.ui.LoginScreen
 import com.dersad.duoctest.ui.ProductAddView
 import com.dersad.duoctest.ui.UsuarioScreen
 import kotlinx.coroutines.launch
-
+import androidx.compose.ui.graphics.Color
 data class NavItem(val route: String, val label: String, val icon: ImageVector)
 
 class MainActivity : ComponentActivity() {
@@ -133,7 +134,10 @@ fun AppEcommerce() {
                                     Icon(Icons.Default.Menu, "Menú")
                                 }
                             }
-                        }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color(0xFF222222),
+                            titleContentColor = Color.White)
                     )
                 }
             },

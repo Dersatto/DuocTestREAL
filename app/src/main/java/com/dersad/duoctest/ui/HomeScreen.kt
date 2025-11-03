@@ -27,6 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.dersad.duoctest.R
 import com.dersad.duoctest.data.Producto
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 
 @Composable
 fun HomeScreen(
@@ -89,11 +91,22 @@ fun HomeScreen(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.vinilos_foreground), // Usamos una imagen que ya existe para que compile
+                painter = painterResource(id = R.drawable.v1),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                colorFilter = ColorFilter.colorMatrix(
+                    ColorMatrix(
+                        floatArrayOf(
+                            0.7f, 0f, 0f, 0f, 0f,
+                            0f, 0.7f, 0f, 0f, 0f,
+                            0f, 0f, 0.7f, 0f, 0f,
+                            0f, 0f, 0f, 1f, 0f
+                        )
+                    )
+                )
             )
+
             Text(
                 text = "NOMBRE DE LA TIENDA DE VINILOS(DA IDEAS NOS) ",
                 style = MaterialTheme.typography.headlineLarge,
