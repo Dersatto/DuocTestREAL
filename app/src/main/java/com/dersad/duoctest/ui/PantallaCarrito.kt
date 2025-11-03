@@ -68,7 +68,6 @@ fun PantallaCarrito(vm: CartViewModel = viewModel()) {
                             }
                         }
                     )
-                    Divider()
                 }
             }
         }

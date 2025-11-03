@@ -10,9 +10,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Producto::class], version = 2, exportSchema = false) // Versión actualizada
+@Database(entities = [Producto::class, Usuario::class], version = 2, exportSchema = false) // Versión actualizada
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productoDao(): ProductoDao
+    abstract fun usuarioDao(): UsuarioDao
 
     companion object {
         @Volatile
@@ -81,6 +82,12 @@ abstract class AppDatabase : RoomDatabase() {
                             Producto(nombre = "THIS IS HAPPENING", descripcion = "Arctic Monkeys - Álbum de 2013", precio = 30990.0, imageResId = R.drawable.ic_launcher_foreground),
 
                         )
+                        val usuarioDao = instance.usuarioDao()
+                        val testUser = Usuario(
+                            correo = "test@example.com",
+                            contraseña = "123456"
+                        )
+                        usuarioDao.upsert(testUser)
                     }
                 }
             }).build()

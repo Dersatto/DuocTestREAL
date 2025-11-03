@@ -46,20 +46,6 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
 
 
         OutlinedTextField(
-            value = estado.nombre,
-            onValueChange = { viewModel.onNombreChange(it) },
-            label = { Text("Nombre") },
-            isError = estado.errores.nombre != null,
-            supportingText = {
-                estado.errores.nombre?.let {
-                    Text(text = it, color = MaterialTheme.colorScheme.error)
-                }
-            },
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
             value = estado.correo,
             onValueChange = { viewModel.onCorreoChange(it) },
             label = { Text("Correo") },
@@ -89,9 +75,11 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
 
         Button(
             onClick = {
-                if (viewModel.validarFormulario()) {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true } // Elimina el login del historial
+                viewModel.validarFormulario { isValid ->
+                    if (isValid) {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
                     }
                 }
             },
@@ -100,5 +88,6 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
         ) {
             Text(text = "Iniciar Sesión")
         }
+
     }
 }

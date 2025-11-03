@@ -11,6 +11,9 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -75,17 +78,16 @@ fun AppEcommerce() {
 
     val navItems = listOf(
         NavItem("home", "Bienvenido", Icons.Default.Home),
-        NavItem("products", "Productos", Icons.Default.ShoppingCart),
+        NavItem("products", "Productos", Icons.AutoMirrored.Filled.List),
         NavItem("cart", "Carrito", Icons.Filled.ShoppingCart),
         NavItem("user", "Mi Perfil", Icons.Default.AccountCircle),
-        NavItem("addproduct", "Agregar Producto", Icons.Default.AccountCircle),
-        NavItem("about", "Sobre Nosotros", Icons.Default.AccountCircle)
+        NavItem("addproduct", "Agregar Producto", Icons.Default.Add),
+        NavItem("about", "Sobre Nosotros", Icons.Default.Info)
     )
 
     val bottomNavItems = listOf(
         NavItem("home", "Inicio", Icons.Default.Home),
-        NavItem("products", "Productos", Icons.Default.ShoppingCart),
-        NavItem("cart", "Carrito", Icons.Default.ShoppingCart),
+        NavItem("products", "Productos", Icons.AutoMirrored.Filled.List),
         NavItem("user", "Perfil", Icons.Default.AccountCircle)
     )
 

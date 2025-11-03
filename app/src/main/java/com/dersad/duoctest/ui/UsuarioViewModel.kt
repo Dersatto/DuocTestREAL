@@ -1,20 +1,23 @@
 package com.dersad.duoctest.ui
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.dersad.duoctest.data.Usuario
-import com.dersad.duoctest.data.UsuarioErrores
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class UsuarioViewModel: ViewModel() {
+class UsuarioViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _estado = MutableStateFlow(value = Usuario())
+    private val dao = com.dersad.duoctest.data.AppDatabase.getInstance(application).usuarioDao()
+
+    private val _estado = MutableStateFlow(Usuario())
     val estado: StateFlow<Usuario> = _estado
 
-    fun onNombreChange(valor: String) {
-        _estado.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
-    }
+    private val _usuarioLogueado = MutableStateFlow<Usuario?>(null)
+    val usuarioLogueado: StateFlow<Usuario?> = _usuarioLogueado
 
     fun onCorreoChange(valor: String) {
         _estado.update { it.copy(correo = valor, errores = it.errores.copy(correo = null)) }
@@ -24,29 +27,38 @@ class UsuarioViewModel: ViewModel() {
         _estado.update { it.copy(contraseña = valor, errores = it.errores.copy(contraseña = null)) }
     }
 
-
-
-
-
-    fun validarFormulario(): Boolean {
+    fun validarFormulario(onResult: (Boolean) -> Unit) {
         val estadoActual = _estado.value
-        val errores= UsuarioErrores(
-            nombre = if (estadoActual.nombre.isBlank()) "El nombre es requerido" else null,
+
+        val errores = com.dersad.duoctest.data.UsuarioErrores(
             correo = if (estadoActual.correo.isBlank()) "El correo es requerido" else null,
             contraseña = if (estadoActual.contraseña.isBlank()) "La contraseña es requerida" else null
         )
-
-
-        val hayErrores = listOfNotNull(
-            errores.nombre,
-            errores.correo,
-            errores.contraseña
-        ).isNotEmpty()
-
         _estado.update { it.copy(errores = errores) }
 
-        return !hayErrores
+        if (errores.correo != null || errores.contraseña != null) {
+            onResult(false)
+            return
+        }
 
+        viewModelScope.launch {
+            val usuarios = dao.getAllUsersOnce()
+            val user = usuarios.find { it.correo == estadoActual.correo && it.contraseña == estadoActual.contraseña }
 
+            if (user != null) {
+                _usuarioLogueado.value = user
+                onResult(true)
+            } else {
+                _estado.update {
+                    it.copy(
+                        errores = it.errores.copy(
+                            correo = "Correo o contraseña incorrectos",
+                            contraseña = "Correo o contraseña incorrectos"
+                        )
+                    )
+                }
+                onResult(false)
+            }
+        }
     }
 }

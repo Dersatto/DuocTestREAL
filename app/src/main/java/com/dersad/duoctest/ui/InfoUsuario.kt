@@ -24,7 +24,6 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "Nombre: ${estado.nombre}")
         Text(text = "Correo: ${estado.correo}")
         Text(text = "Contraseña: ${estado.contraseña}")
     }

@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -32,13 +35,16 @@ fun ProductAddView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         Text(
             text = "Ingrese los datos de su producto",
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+            modifier = Modifier.padding(top = 16.dp, bottom = 14.dp),
+            textAlign = TextAlign.Center
+            )
 
         OutlinedTextField(
             value = nombre,
@@ -51,6 +57,7 @@ fun ProductAddView(
             supportingText = {
                 nombreError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -65,6 +72,7 @@ fun ProductAddView(
             supportingText = {
                 descripcionError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -79,7 +87,9 @@ fun ProductAddView(
             supportingText = {
                 precioError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             },
-            modifier = Modifier.fillMaxWidth()
+            shape = RoundedCornerShape(20.dp),
+
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
         )
 
         Button(
@@ -105,6 +115,7 @@ fun ProductAddView(
                     navController.popBackStack()
                 }
             },
+            shape = RoundedCornerShape(20.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
