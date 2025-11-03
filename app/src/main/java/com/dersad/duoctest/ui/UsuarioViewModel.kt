@@ -1,11 +1,11 @@
-package com.dersad.duoctest.ui;
+package com.dersad.duoctest.ui
 
-import androidx.lifecycle.ViewModel;
-import com.dersad.duoctest.data.Usuario;
-import com.dersad.duoctest.data.UsuarioErrores;
-import kotlinx.coroutines.flow.MutableStateFlow;
-import kotlinx.coroutines.flow.StateFlow;
-import kotlinx.coroutines.flow.update;
+import androidx.lifecycle.ViewModel
+import com.dersad.duoctest.data.Usuario
+import com.dersad.duoctest.data.UsuarioErrores
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class UsuarioViewModel: ViewModel() {
 
@@ -24,9 +24,6 @@ class UsuarioViewModel: ViewModel() {
         _estado.update { it.copy(contraseña = valor, errores = it.errores.copy(contraseña = null)) }
     }
 
-    fun onDecidirRol(valor: Boolean) {
-        _estado.update { it.copy(rol = valor) }
-    }
 
 
 

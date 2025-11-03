@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.dersad.duoctest.ui.AboutView
 import com.dersad.duoctest.ui.CartViewModel
 import com.dersad.duoctest.ui.HomeScreen
 import com.dersad.duoctest.ui.PantallaCarrito
@@ -42,6 +43,7 @@ import com.dersad.duoctest.ui.PantallaProductos
 import com.dersad.duoctest.ui.theme.MyApplicationTheme
 import com.dersad.duoctest.ui.UsuarioViewModel
 import com.dersad.duoctest.ui.LoginScreen
+import com.dersad.duoctest.ui.ProductAddView
 import com.dersad.duoctest.ui.UsuarioScreen
 
 import kotlinx.coroutines.launch
@@ -71,10 +73,14 @@ fun AppEcommerce() {
     val usuarioViewModel: UsuarioViewModel = viewModel()
 
     val navItems = listOf(
-        NavItem("home", "Bienvenido", Icons.Default.Home), // Título cambiado
+        NavItem("home", "Bienvenido", Icons.Default.Home),
         NavItem("products", "Productos", Icons.Default.ShoppingCart),
         NavItem("cart", "Carrito", Icons.Filled.ShoppingCart),
-        NavItem("user", "Mi Perfil", Icons.Default.AccountCircle)
+        NavItem("user", "Mi Perfil", Icons.Default.AccountCircle),
+        NavItem("addproduct", "Agregar Producto", Icons.Default.AccountCircle),
+        NavItem("about", "Sobre Nosotros", Icons.Default.AccountCircle)
+
+
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -137,7 +143,9 @@ fun AppEcommerce() {
                 }
                 composable("cart") { PantallaCarrito(vm = cartViewModel) }
                 composable("login") { LoginScreen(navController, usuarioViewModel) }
-                composable("user") { UsuarioScreen(usuarioViewModel) } 
+                composable("user") { UsuarioScreen(usuarioViewModel) }
+                composable("addproduct") { ProductAddView(navController) }
+                composable("about") { AboutView(navController) }
 
                 composable(
                     "products/{productId}",
