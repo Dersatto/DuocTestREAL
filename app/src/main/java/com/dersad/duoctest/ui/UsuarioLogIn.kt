@@ -21,7 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-
+import androidx.compose.ui.text.font.FontWeight
 @Composable
 fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = viewModel()) {
 //Añadi q los datos se redirijan al home
@@ -73,6 +73,8 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
             modifier = Modifier.fillMaxWidth()
         )
 
+
+
         Button(
             onClick = {
                 viewModel.validarFormulario { isValid ->
@@ -88,6 +90,12 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
         ) {
             Text(text = "Iniciar Sesión")
         }
+
+        Text(text= "test@example.com 123456",
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight(300)
+        )
 
     }
 }
