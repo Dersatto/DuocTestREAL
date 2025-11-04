@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,30 +34,27 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-
         Spacer(modifier = Modifier.height(40.dp))
 
+        // Tarjeta de Perfil de Usuario
         Column(
             modifier = Modifier
-                .width(280.dp)
-                .height(300.dp)
+                .fillMaxWidth() // <-- Ancho completo
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color(0xFFE0E0E0))
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-        )
-
-
-        {
-
-            Text(text = "Perfil de Usuario")
+        ) {
+            Text(
+                text = "Perfil de Usuario",
+                fontWeight = FontWeight(800) // <-- Título en negrita
+            )
             Icon(
                 imageVector = Icons.Filled.AccountCircle,
                 contentDescription = "Profile Icon",
                 modifier = Modifier.size(100.dp),
                 tint = Color(0xFF2E2E2E)
             )
-
             Spacer(modifier = Modifier.height(12.dp))
 
             usuario?.let {
@@ -69,11 +67,25 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text("Productos Comprados")
-        LazyColumn {
-            if (usuario?.productosComprados?.isEmpty() == true) {
+        // Sección de Productos Comprados
+        Text(
+            "Productos Comprados",
+            modifier = Modifier.padding(bottom = 8.dp),
+            fontWeight = FontWeight(800) // <-- Título en negrita
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp)), // <-- Bordes redondeados
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (usuario?.productosComprados.isNullOrEmpty()) {
                 item {
-                    Text("No has comprado productos.")
+                    Text(
+                        "No has comprado productos.",
+                        modifier = Modifier.padding(16.dp),
+                        fontWeight = FontWeight(300) // <-- Texto estilizado
+                    )
                 }
             } else {
                 items(usuario?.productosComprados ?: emptyList()) { productoComprado ->

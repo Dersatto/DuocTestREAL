@@ -1,42 +1,123 @@
 package com.dersad.duoctest.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
+import com.dersad.duoctest.R
 
 @Composable
 fun AboutView(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // --- Sección Superior: Logo y Descripción ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground), // Puedes cambiar esto por tu logo
+                contentDescription = "Logo de la Tienda",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "Sobre AMARI STORE", 
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "Somos una tienda apasionada por la música y el formato físico. Creemos que la experiencia de escuchar un vinilo es única e irremplazable. Nuestro objetivo es ofrecer una cuidada selección de clásicos y novedades para coleccionistas y nuevos aficionados.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
 
-        Logo()
+        Divider()
 
-        Text(
-            text = "Sobre Nosotros",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // --- Sección de Equipo ---
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp)
+        ) {
+            Text(
+                "Integrantes del Equipo",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
 
-        Text(
-            text = """
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam.
-            """.trimIndent(),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
+            val teamMembers = listOf(
+                "Sofia Mayorga" to "Programadora y Diseñadora",
+                "Jorge Osorio" to "Programador y Diseñador"
+            )
+
+            teamMembers.forEach { (name, role) ->
+                ListItem(
+                    headlineContent = { Text(name, fontWeight = FontWeight.Medium) },
+                    supportingContent = { Text(role) },
+                    leadingContent = {
+                        Icon(
+                            Icons.Default.AccountCircle,
+                            contentDescription = "Icono de integrante",
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                )
+                Divider()
+            }
+        }
+
+        // --- Sección de Redes Sociales ---
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "Nuestras Redes",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+                Icon(Icons.Default.Place, contentDescription = "Instagram", modifier = Modifier.size(40.dp))
+                Icon(Icons.Default.Call, contentDescription = "Facebook", modifier = Modifier.size(40.dp))
+                Icon(Icons.Default.Build, contentDescription = "Twitter", modifier = Modifier.size(40.dp))
+            }
+        }
     }
 }

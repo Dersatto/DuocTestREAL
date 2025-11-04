@@ -14,7 +14,8 @@ class UsuarioViewModel(application: Application) : AndroidViewModel(application)
 
     private val dao = com.dersad.duoctest.data.AppDatabase.getInstance(application).usuarioDao()
 
-    private val _estado = MutableStateFlow(Usuario())
+    // MAS FACIL
+    private val _estado = MutableStateFlow(Usuario(correo = "test@example.com", contraseña = "123456"))
     val estado: StateFlow<Usuario> = _estado
 
     private val _usuarioLogueado = MutableStateFlow<Usuario?>(null)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.dersad.duoctest.data.Producto
+import androidx.compose.foundation.horizontalScroll
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +34,7 @@ fun PantallaProductos(
     val context = LocalContext.current
     var query by remember { mutableStateOf("") }
     var selectedProduct by remember { mutableStateOf<Producto?>(null) }
-
+    var sortByPriceDesc by remember { mutableStateOf(false) }
 
     val categorias = listOf(
         "Todos", "Rock", "Alternative", "Pop", "Electronic",
@@ -42,12 +44,17 @@ fun PantallaProductos(
     var selectedCategory by remember { mutableStateOf(initialCategory ?: "Todos") }
 
 
-    val productosFiltrados = remember(productos, query, selectedCategory) {
-        productos.filter { p ->
+    val productosFiltrados = remember(productos, query, selectedCategory, sortByPriceDesc) {
+        val filteredList = productos.filter { p ->
             (selectedCategory == "Todos" || p.categoria.equals(selectedCategory, ignoreCase = true)) &&
                     (query.isBlank() ||
                             p.nombre.contains(query, ignoreCase = true) ||
                             p.descripcion.contains(query, ignoreCase = true))
+        }
+        if (sortByPriceDesc) {
+            filteredList.sortedByDescending { it.precio }
+        } else {
+            filteredList
         }
     }
 
@@ -102,14 +109,21 @@ fun PantallaProductos(
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(bottom = 16.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            items(categorias.size) { index ->
-                val cat = categorias[index]
+            Button(onClick = { sortByPriceDesc = !sortByPriceDesc }) {
+                Text(if (sortByPriceDesc) "Ordenado de Mayor a Menor" else "Ordenar de más caro a más barato")
+            }
+        }
+
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()).padding(bottom = 16.dp)
+        ) {
+            categorias.forEach { cat ->
                 FilterChip(
+                    modifier = Modifier.padding(end = 8.dp),
                     selected = cat == selectedCategory,
                     onClick = { selectedCategory = cat },
                     label = { Text(cat) },

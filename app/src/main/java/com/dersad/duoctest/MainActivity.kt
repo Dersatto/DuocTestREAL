@@ -186,11 +186,7 @@ fun AppEcommerce() {
                 startDestination = "login",
                 modifier = Modifier.padding(innerPadding)
             ) {
-
-                composable("home") { backStackEntry ->
-                        HomeScreen(
-                            navController = navController,
-                            cartViewModel = cartViewModel)}
+                composable("home") { HomeScreen(navController = navController, cartViewModel = cartViewModel) }
                 composable("products") { PantallaProductos(navController, cartViewModel = cartViewModel) }
                 composable("cart") { PantallaCarrito(vm = cartViewModel, usuarioViewModel = usuarioViewModel) }
                 composable("login") { LoginScreen(navController, usuarioViewModel) }
