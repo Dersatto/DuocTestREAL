@@ -2,6 +2,7 @@ package com.dersad.duoctest.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -22,24 +23,35 @@ import com.dersad.duoctest.data.Producto
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaProductos(
-    navController: NavController, 
+    navController: NavController,
     productosViewModel: ProductosViewModel = viewModel(),
-    cartViewModel: CartViewModel = viewModel()
+    cartViewModel: CartViewModel = viewModel(),
+    initialCategory: String? = null
 ) {
     val productos by productosViewModel.productos.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var query by remember { mutableStateOf("") }
     var selectedProduct by remember { mutableStateOf<Producto?>(null) }
 
-    val productosFiltrados = remember(productos, query) {
+
+    val categorias = listOf(
+        "Todos", "Rock", "Alternative", "Pop", "Electronic",
+        "Progresivo", "Soul", "Dream Pop", "Emo", "Trip Hop",
+        "Indie Rock", "Experimental", "Shoegaze", "Rock Latino"
+    )
+    var selectedCategory by remember { mutableStateOf(initialCategory ?: "Todos") }
+
+
+    val productosFiltrados = remember(productos, query, selectedCategory) {
         productos.filter { p ->
-            query.isBlank() || 
-            p.nombre.contains(query, ignoreCase = true) || 
-            p.descripcion.contains(query, ignoreCase = true)
+            (selectedCategory == "Todos" || p.categoria.equals(selectedCategory, ignoreCase = true)) &&
+                    (query.isBlank() ||
+                            p.nombre.contains(query, ignoreCase = true) ||
+                            p.descripcion.contains(query, ignoreCase = true))
         }
     }
 
-    // pop up de vista
+
     if (selectedProduct != null) {
         AlertDialog(
             onDismissRequest = { selectedProduct = null },
@@ -53,25 +65,33 @@ fun PantallaProductos(
                         contentScale = ContentScale.Crop
                     )
                     Text(selectedProduct!!.descripcion)
-                    Text(text = "Precio: ${formatClp(selectedProduct!!.precio)}", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = "Precio: ${formatClp(selectedProduct!!.precio)}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             },
             confirmButton = {
-                Button(onClick = { 
+                Button(onClick = {
                     cartViewModel.addToCart(selectedProduct!!)
-                    Toast.makeText(context, "${selectedProduct!!.nombre} añadido al carrito", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "${selectedProduct!!.nombre} añadido al carrito",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     selectedProduct = null
                 }) {
                     Text("Agregar al carrito")
                 }
             },
-            dismissButton = { 
+            dismissButton = {
                 OutlinedButton(onClick = { selectedProduct = null }) {
                     Text("Cerrar")
                 }
             }
         )
     }
+
 
     Column(modifier = Modifier.padding(16.dp)) {
         OutlinedTextField(
@@ -81,6 +101,26 @@ fun PantallaProductos(
             singleLine = true,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
+
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(bottom = 16.dp)
+        ) {
+            items(categorias.size) { index ->
+                val cat = categorias[index]
+                FilterChip(
+                    selected = cat == selectedCategory,
+                    onClick = { selectedCategory = cat },
+                    label = { Text(cat) },
+                    shape = RoundedCornerShape(50),
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                )
+            }
+        }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),

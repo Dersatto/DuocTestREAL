@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.dersad.duoctest.ui
 
 import androidx.compose.foundation.layout.Column
@@ -6,6 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -27,6 +33,14 @@ fun ProductAddView(
     var precioText by remember { mutableStateOf("") }
     var stockText by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
+
+    var expanded by remember { mutableStateOf(false) }
+
+    val categorias = listOf(
+        "Rock", "Alternative", "Pop", "Electronic", "Progresivo",
+        "Soul", "Dream Pop", "Emo", "Trip Hop", "Indie Rock",
+        "Experimental", "Shoegaze", "Rock Latino"
+    )
 
     var nombreError by remember { mutableStateOf<String?>(null) }
     var descripcionError by remember { mutableStateOf<String?>(null) }
@@ -91,7 +105,6 @@ fun ProductAddView(
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp)
         )
 
         OutlinedTextField(
@@ -109,22 +122,44 @@ fun ProductAddView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
-            value = categoria,
-            onValueChange = {
-                categoria = it
-                categoriaError = null
-            },
-            label = { Text("Categoría") },
-            isError = categoriaError != null,
-            supportingText = {
-                categoriaError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-            },
-            shape = RoundedCornerShape(20.dp),
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp)
-        )
+        ) {
+            OutlinedTextField(
+                value = categoria,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Categoría") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                isError = categoriaError != null,
+                supportingText = {
+                    categoriaError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                },
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categorias.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            categoria = option
+                            categoriaError = null
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
 
         Button(
             onClick = {

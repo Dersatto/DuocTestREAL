@@ -186,13 +186,22 @@ fun AppEcommerce() {
                 startDestination = "login",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable("home") { HomeScreen(cartViewModel = cartViewModel) }
+
+                composable("home") { backStackEntry ->
+                        HomeScreen(
+                            navController = navController,
+                            cartViewModel = cartViewModel)}
                 composable("products") { PantallaProductos(navController, cartViewModel = cartViewModel) }
                 composable("cart") { PantallaCarrito(vm = cartViewModel, usuarioViewModel = usuarioViewModel) }
                 composable("login") { LoginScreen(navController, usuarioViewModel) }
                 composable("user") { UsuarioScreen(usuarioViewModel) }
                 composable("addproduct") { ProductAddView(navController) }
                 composable("about") { AboutView(navController) }
+                composable("productos/{categoria}") { backStackEntry ->
+                    val categoria = backStackEntry.arguments?.getString("categoria")
+                    PantallaProductos(navController, initialCategory = categoria)
+                }
+
 
                 composable(
                     "products/{productId}",
