@@ -46,12 +46,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import com.dersad.duoctest.ui.AboutView
 import com.dersad.duoctest.ui.CartViewModel
 import com.dersad.duoctest.ui.HomeScreen
+import com.dersad.duoctest.ui.LoginScreen
 import com.dersad.duoctest.ui.PantallaCarrito
 import com.dersad.duoctest.ui.PantallaProductoDetalle
 import com.dersad.duoctest.ui.PantallaProductos
 import com.dersad.duoctest.ui.theme.MyApplicationTheme
 import com.dersad.duoctest.ui.UsuarioViewModel
-import com.dersad.duoctest.ui.LoginScreen
 import com.dersad.duoctest.ui.ProductAddView
 import com.dersad.duoctest.ui.UsuarioScreen
 import kotlinx.coroutines.launch
@@ -99,12 +99,11 @@ fun AppEcommerce() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
-    val showTopBar = currentRoute != "login"
+    val showBars = currentRoute != "login"
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = showTopBar,
+        gesturesEnabled = showBars,
         drawerContent = {
             ModalDrawerSheet {
                 navItems.forEach { item ->
@@ -126,7 +125,7 @@ fun AppEcommerce() {
     ) {
         Scaffold(
             topBar = {
-                if (showTopBar) {
+                if (showBars) {
                     TopAppBar(
                         title = { Text(navItems.find { it.route == currentRoute }?.label ?: "Mi Tienda") },
                         navigationIcon = {
@@ -148,7 +147,7 @@ fun AppEcommerce() {
             },
 
             bottomBar = {
-                if (currentRoute != "login") {
+                if (showBars) {
                     NavigationBar {
                         bottomNavItems.forEach { item ->
                             NavigationBarItem(
@@ -183,13 +182,13 @@ fun AppEcommerce() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "login",
+                startDestination = "login", // <-- VUELVE A INICIAR EN LOGIN
                 modifier = Modifier.padding(innerPadding)
             ) {
+                composable("login") { LoginScreen(navController, usuarioViewModel) } // <-- RUTA RESTAURADA
                 composable("home") { HomeScreen(navController = navController, cartViewModel = cartViewModel) }
                 composable("products") { PantallaProductos(navController, cartViewModel = cartViewModel) }
                 composable("cart") { PantallaCarrito(vm = cartViewModel, usuarioViewModel = usuarioViewModel) }
-                composable("login") { LoginScreen(navController, usuarioViewModel) }
                 composable("user") { UsuarioScreen(usuarioViewModel) }
                 composable("addproduct") { ProductAddView(navController) }
                 composable("about") { AboutView(navController) }
