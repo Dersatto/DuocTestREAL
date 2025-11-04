@@ -182,10 +182,10 @@ fun AppEcommerce() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "login", // <-- VUELVE A INICIAR EN LOGIN
+                startDestination = "login",
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable("login") { LoginScreen(navController, usuarioViewModel) } // <-- RUTA RESTAURADA
+                composable("login") { LoginScreen(navController, usuarioViewModel) }
                 composable("home") { HomeScreen(navController = navController, cartViewModel = cartViewModel) }
                 composable("products") { PantallaProductos(navController, cartViewModel = cartViewModel) }
                 composable("cart") { PantallaCarrito(vm = cartViewModel, usuarioViewModel = usuarioViewModel) }
