@@ -11,5 +11,7 @@ data class Producto(
     @ColumnInfo(name = "nombre") val nombre: String,
     @ColumnInfo(name = "descripcion") val descripcion: String,
     @ColumnInfo(name = "precio") val precio: Double,
+    @ColumnInfo(name = "stock") val stock: Int,
+    @ColumnInfo(name = "cat") val categoria: String,
     @DrawableRes @ColumnInfo(name = "image_res_id") val imageResId: Int
 )

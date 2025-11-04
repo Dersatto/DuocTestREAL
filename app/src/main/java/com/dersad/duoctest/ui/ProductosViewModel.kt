@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class ProductosViewModel(application: Application) : AndroidViewModel(application) {
     private val dao = AppDatabase.getInstance(application).productoDao()
-//Trae los datos del Dao
+    //Trae los datos del Dao
     val productos = dao.getAll()
         .stateIn(
             scope = viewModelScope,
@@ -27,21 +27,22 @@ class ProductosViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getProducto(id: Int) { // Corregido a Int
         viewModelScope.launch {
-            dao.getById(id).collect { 
+            dao.getById(id).collect {
                 _producto.value = it
             }
         }
     }
 
-    fun agregar(nombre: String, descripcion: String, precio: Double) {
+    fun agregar(nombre: String, descripcion: String, precio: Double, stock: Int, cat: String) {
         viewModelScope.launch {
             dao.upsert(
                 Producto(
                     nombre = nombre.trim(),
                     descripcion = descripcion.trim(),
                     precio = precio,
-                    // Añadimos una imagen por defecto para que la función no falle
-                    imageResId = R.drawable.ic_launcher_foreground 
+                    stock = stock,
+                    categoria = cat.trim(),
+                    imageResId = R.drawable.ic_launcher_foreground
                 )
             )
         }

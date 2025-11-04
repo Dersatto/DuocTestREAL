@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
-
-
 @Composable
 fun ProductAddView(
     navController: NavController,
@@ -27,24 +25,27 @@ fun ProductAddView(
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var precioText by remember { mutableStateOf("") }
+    var stockText by remember { mutableStateOf("") }
+    var categoria by remember { mutableStateOf("") }
 
     var nombreError by remember { mutableStateOf<String?>(null) }
     var descripcionError by remember { mutableStateOf<String?>(null) }
     var precioError by remember { mutableStateOf<String?>(null) }
+    var stockError by remember { mutableStateOf<String?>(null) }
+    var categoriaError by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Ingrese los datos de su producto",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(top = 16.dp, bottom = 14.dp),
             textAlign = TextAlign.Center
-            )
+        )
 
         OutlinedTextField(
             value = nombre,
@@ -88,14 +89,48 @@ fun ProductAddView(
                 precioError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             },
             shape = RoundedCornerShape(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp)
+        )
 
-            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
+        OutlinedTextField(
+            value = stockText,
+            onValueChange = {
+                stockText = it
+                stockError = null
+            },
+            label = { Text("Stock disponible") },
+            isError = stockError != null,
+            supportingText = {
+                stockError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            },
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = categoria,
+            onValueChange = {
+                categoria = it
+                categoriaError = null
+            },
+            label = { Text("Categoría") },
+            isError = categoriaError != null,
+            supportingText = {
+                categoriaError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            },
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp)
         )
 
         Button(
             onClick = {
                 var valid = true
                 val precio = precioText.toDoubleOrNull()
+                val stock = stockText.toIntOrNull()
 
                 if (nombre.isBlank()) {
                     nombreError = "Este campo es obligatorio"
@@ -109,9 +144,17 @@ fun ProductAddView(
                     precioError = "Este campo es obligatorio"
                     valid = false
                 }
+                if (stockText.isBlank() || stock == null) {
+                    stockError = "Dato inválido"
+                    valid = false
+                }
+                if (categoria.isBlank()) {
+                    categoriaError = "Este campo es obligatorio"
+                    valid = false
+                }
 
                 if (valid) {
-                    viewModel.agregar(nombre, descripcion, precio!!)
+                    viewModel.agregar(nombre, descripcion, precio!!, stock!!, categoria)
                     navController.popBackStack()
                 }
             },
