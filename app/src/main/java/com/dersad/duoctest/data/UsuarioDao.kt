@@ -1,21 +1,19 @@
 package com.dersad.duoctest.data
 
-import kotlinx.coroutines.flow.Flow
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room.Update
 
 @Dao
 interface UsuarioDao {
-
-    @Upsert
-    suspend fun upsert(usuario: Usuario)
-    @Query("SELECT * FROM usuarios ORDER BY id DESC")
+    @Query("SELECT * FROM usuarios")
     suspend fun getAllUsersOnce(): List<Usuario>
 
-    @Query("SELECT * FROM usuarios WHERE id = :id")
-    fun getById(id: Int): Usuario?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(usuario: Usuario)
 
-    @Query("DELETE FROM usuarios")
-    suspend fun clear()
+    @Update
+    suspend fun update(usuario: Usuario)
 }

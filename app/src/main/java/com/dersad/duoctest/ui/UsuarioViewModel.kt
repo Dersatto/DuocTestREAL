@@ -3,6 +3,7 @@ package com.dersad.duoctest.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.dersad.duoctest.data.ProductoComprado
 import com.dersad.duoctest.data.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,13 @@ class UsuarioViewModel(application: Application) : AndroidViewModel(application)
 
     fun onContraseñaChange(valor: String) {
         _estado.update { it.copy(contraseña = valor, errores = it.errores.copy(contraseña = null)) }
+    }
+
+    fun agregarCompra(items: List<CartItem>) {
+        _usuarioLogueado.update { usuarioActual ->
+            val nuevosProductos = items.map { ProductoComprado(it.producto, it.quantity) }
+            usuarioActual?.copy(productosComprados = usuarioActual.productosComprados + nuevosProductos)
+        }
     }
 
     fun validarFormulario(onResult: (Boolean) -> Unit) {

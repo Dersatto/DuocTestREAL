@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -76,6 +79,7 @@ fun AppEcommerce() {
 
     val cartViewModel: CartViewModel = viewModel()
     val usuarioViewModel: UsuarioViewModel = viewModel()
+    val cartItems by cartViewModel.cartItems.collectAsState()
 
     val navItems = listOf(
         NavItem("home", "Bienvenido", Icons.Default.Home),
@@ -89,6 +93,7 @@ fun AppEcommerce() {
     val bottomNavItems = listOf(
         NavItem("home", "Inicio", Icons.Default.Home),
         NavItem("products", "Productos", Icons.AutoMirrored.Filled.List),
+        NavItem("cart", "Carrito", Icons.Filled.ShoppingCart),
         NavItem("user", "Perfil", Icons.Default.AccountCircle)
     )
 
@@ -147,7 +152,19 @@ fun AppEcommerce() {
                     NavigationBar {
                         bottomNavItems.forEach { item ->
                             NavigationBarItem(
-                                icon = { Icon(item.icon, contentDescription = item.label) },
+                                icon = {
+                                    if (item.route == "cart") {
+                                        BadgedBox(badge = {
+                                            if (cartItems.isNotEmpty()) {
+                                                Badge { Text("${cartItems.size}") }
+                                            }
+                                        }) {
+                                            Icon(item.icon, contentDescription = item.label)
+                                        }
+                                    } else {
+                                        Icon(item.icon, contentDescription = item.label)
+                                    }
+                                },
                                 label = { Text(item.label) },
                                 selected = currentRoute == item.route,
                                 onClick = {
@@ -171,7 +188,7 @@ fun AppEcommerce() {
             ) {
                 composable("home") { HomeScreen(cartViewModel = cartViewModel) }
                 composable("products") { PantallaProductos(navController, cartViewModel = cartViewModel) }
-                composable("cart") { PantallaCarrito(vm = cartViewModel) }
+                composable("cart") { PantallaCarrito(vm = cartViewModel, usuarioViewModel = usuarioViewModel) }
                 composable("login") { LoginScreen(navController, usuarioViewModel) }
                 composable("user") { UsuarioScreen(usuarioViewModel) }
                 composable("addproduct") { ProductAddView(navController) }

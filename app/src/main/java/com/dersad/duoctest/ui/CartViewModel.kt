@@ -33,7 +33,7 @@ class CartViewModel : ViewModel() {
     }
 
     fun increaseQuantity(producto: Producto) {
-        addToCart(producto) 
+        addToCart(producto)
     }
 
     fun decreaseQuantity(producto: Producto) {
@@ -53,5 +53,11 @@ class CartViewModel : ViewModel() {
 
     fun clearCart() {
         _cartItems.value = emptyMap()
+    }
+
+    fun comprar(usuarioViewModel: UsuarioViewModel) {
+        val items = _cartItems.value.values.toList()
+        usuarioViewModel.agregarCompra(items)
+        clearCart()
     }
 }

@@ -1,5 +1,6 @@
 package com.dersad.duoctest.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,8 +32,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 
 import androidx.compose.ui.text.style.TextAlign
 @Composable
-fun PantallaCarrito(vm: CartViewModel = viewModel()) {
+fun PantallaCarrito(vm: CartViewModel = viewModel(), usuarioViewModel: UsuarioViewModel = viewModel()) {
     val cartItems by vm.cartItems.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
 
     val itemsList = cartItems.values.toList()
@@ -106,7 +109,10 @@ fun PantallaCarrito(vm: CartViewModel = viewModel()) {
 
 
                 //este botón podría tener animación
-                Button(onClick = { }) {
+                Button(onClick = { 
+                    vm.comprar(usuarioViewModel)
+                    Toast.makeText(context, "Gracias por tu compra", Toast.LENGTH_SHORT).show()
+                }) {
                     Text("Comprar")
                 }
             }

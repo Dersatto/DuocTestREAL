@@ -2,12 +2,14 @@ package com.dersad.duoctest.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.dersad.duoctest.R
 import com.dersad.duoctest.data.Producto
+import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 
@@ -42,7 +46,22 @@ fun HomeScreen(
 
     val destacados = remember(productos) { productos.shuffled().take(4) }
     val listados = remember(productos) { 
-        productos.filter { p -> !destacados.contains(p) }.shuffled().take(4)
+        productos.filter { p -> !destacados.contains(p) }.shuffled().take(10)
+    }
+
+    val lazyListState = rememberLazyListState()
+    var isUserInteracting by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = listados, key2 = isUserInteracting) {
+        if (listados.isNotEmpty() && !isUserInteracting) {
+            lazyListState.scrollToItem(0)
+            while (true) {
+                delay(16)
+                lazyListState.scroll {
+                    scrollBy(1.0f)
+                }
+            }
+        }
     }
 
     if (selectedProduct != null) {
@@ -161,7 +180,18 @@ fun HomeScreen(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            LazyRow(
+                state = lazyListState,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            isUserInteracting = event.type.toString() == "down"
+                        }
+                    }
+                }
+            ) {
                 items(listados) { p ->
                     Card(onClick = { selectedProduct = p }, modifier = Modifier.width(240.dp)) {
                         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
