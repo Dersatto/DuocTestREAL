@@ -22,16 +22,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+
 @Composable
 fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = viewModel()) {
-//Añadi q los datos se redirijan al home
     val estado by viewModel.estado.collectAsStateWithLifecycle()
+
+    val recordarState = remember { mutableStateOf(false) }
 
     Column(
         Modifier
             .fillMaxSize()
             .padding(horizontal = 40.dp, vertical = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Logo()
@@ -43,7 +49,6 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
                 .align(CenterHorizontally)
                 .padding(bottom = 16.dp)
         )
-
 
         OutlinedTextField(
             value = estado.correo,
@@ -73,7 +78,21 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
             modifier = Modifier.fillMaxWidth()
         )
 
-
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Switch(
+                checked = recordarState.value,
+                onCheckedChange = { recordarState.value = it }
+            )
+            Text(
+                text = "Recordarme",
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
 
         Button(
             onClick = {
@@ -91,7 +110,8 @@ fun LoginScreen(navController: NavController, viewModel: UsuarioViewModel = view
             Text(text = "Iniciar Sesión")
         }
 
-        Text(text= "test@example.com 123456",
+        Text(
+            text = "¿Olvidaste tu contraseña?",
             style = MaterialTheme.typography.labelMedium,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight(300)
