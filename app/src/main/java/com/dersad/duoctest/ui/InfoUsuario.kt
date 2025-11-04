@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,11 +35,10 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
     ) {
 
 
-        Spacer(modifier = Modifier.height(40.dp))
 
         Column(
             modifier = Modifier
-                .width(280.dp)
+                .fillMaxWidth()
                 .height(300.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color(0xFFE0E0E0))
@@ -49,7 +49,9 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
 
         {
 
-            Text(text = "Perfil de Usuario")
+            Text(text = "Perfil de Usuario",
+                fontWeight = FontWeight(800))
+
             Icon(
                 imageVector = Icons.Filled.AccountCircle,
                 contentDescription = "Profile Icon",
@@ -69,11 +71,26 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text("Productos Comprados")
-        LazyColumn {
-            if (usuario?.productosComprados?.isEmpty() == true) {
+        Text("Productos Comprados",
+            modifier = Modifier.padding(bottom = 8.dp),
+            fontWeight = FontWeight(800))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clip(RoundedCornerShape(20.dp)) ,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            if (usuario?.productosComprados.isNullOrEmpty()) {
                 item {
-                    Text("No has comprado productos.")
+                    Text(
+                        "No has comprado productos.",
+                        modifier = Modifier.padding(8.dp),
+                        fontWeight = FontWeight(300)
+
+                    )
                 }
             } else {
                 items(usuario?.productosComprados ?: emptyList()) { productoComprado ->
@@ -87,10 +104,13 @@ fun UsuarioScreen(viewModel: UsuarioViewModel = viewModel()) {
                         },
                         headlineContent = { Text(productoComprado.producto.nombre) },
                         supportingContent = { Text("Cantidad: ${productoComprado.quantity}") },
-                        trailingContent = { Text(formatClp(productoComprado.producto.precio * productoComprado.quantity)) }
+                        trailingContent = {
+                            Text(formatClp(productoComprado.producto.precio * productoComprado.quantity))
+                        }
                     )
                 }
             }
         }
     }
 }
+

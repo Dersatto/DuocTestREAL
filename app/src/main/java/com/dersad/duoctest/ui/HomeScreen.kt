@@ -156,27 +156,27 @@ fun HomeScreen(
             Text(
                 "Categorías",
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 5.dp)
             )
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 10.dp)
             ) {
                 items(categorias) { cat ->
                     val isSelected = cat == selectedCategory
                     FilterChip(
                         selected = isSelected,
-                        // ✅ Navigate to ProductosScreen passing selected category
                         onClick = { navController.navigate("productos/${cat}") },
                         label = { Text(cat) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        shape = RoundedCornerShape(50),
                         )
-                    )
                 }
             }
 
